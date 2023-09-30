@@ -38,22 +38,7 @@ public:
         return *this;
     }
 
-    bool operator == (const BigInteger& x) {
-        if (_sign != x._sign) {
-            return false;
-        }
-        if (size() != x.size()) {
-            return false;
-        }
-        for (int i = size() - 1; i >= 0; --i) {
-            if (_digits[i] != x._digits[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool operator < (const BigInteger& x) {
+    bool operator < (const BigInteger& x) const {
         if (_sign > x._sign) {
             return false;
         } else if (_sign < x._sign) {
@@ -87,6 +72,26 @@ public:
             }
         }
         return false;
+    }
+
+    bool operator > (const BigInteger& x) const {
+        return (x < *this);
+    }
+
+    bool operator == (const BigInteger& x) const {
+        return !((x < *this) || (x > *this));
+    }
+
+    bool operator >= (const BigInteger& x) const {
+        return !(*this < x);
+    }
+
+    bool operator <= (const BigInteger& x) const {
+        return !(*this > x);
+    }
+
+    bool operator != (const BigInteger& x) const {
+        return !(*this == x);
     }
 
     BigInteger& operator += (const BigInteger& x) {
