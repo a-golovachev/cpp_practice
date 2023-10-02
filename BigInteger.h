@@ -187,6 +187,10 @@ public:
         return *this -= 1;
     }
 
+    BigInteger operator * (const BigInteger& x) {
+
+    }
+
 private:
     bool _sign;
     size_t _system = 1024;
