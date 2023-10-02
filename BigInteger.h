@@ -6,7 +6,7 @@ public:
     BigInteger() {}
     BigInteger(int a) {
         _sign = a >= 0;
-        a = abs(a);
+        a = std::abs(a);
         while (a) {
             _digits.push_back(a % _system);
             a /= _system;
@@ -33,9 +33,20 @@ public:
         return _sign;
     }
 
-    BigInteger& operator - () {
-        _sign = !_sign;
-        return *this;
+    BigInteger abs() const {
+        BigInteger res = *this;
+        res._sign = true;
+        return res;
+    }
+
+    BigInteger& operator = (const BigInteger& x) {
+
+    }
+
+    BigInteger operator - () const {
+        BigInteger res = *this;
+        res._sign = !_sign;
+        return res;
     }
 
     bool operator < (const BigInteger& x) const {
@@ -105,19 +116,82 @@ public:
                 }
                 if (_digits[i] >= _system) {
                     overflow = true;
-                    _digits[i] %= 1024;
+                    _digits[i] %= _system;
                 } else {
                     overflow = false;
                 }
             }
         } else {
-
+            if (x.abs() > abs()) {
+                for (int i = 0; i < x.size(); ++i) {
+                    if (i < size()) {
+                        _digits[i] = (x._digits[i] - _digits[i] - overflow);
+                    } else {
+                        _digits.push_back(x._digits[i] - overflow);
+                    }
+                    if (_digits[i] < 0) {
+                        overflow = true;
+                        _digits[i] %= _system;
+                    } else {
+                        overflow = false;
+                    }
+                }
+                _sign = x.sign();
+            } else {
+                for (int i = 0; i < size(); ++i) {
+                    if (i < x.size()) {
+                        _digits[i] -= (x._digits[i] + overflow);
+                    } else if (overflow) {
+                        --_digits[i];
+                    } else {
+                        break;
+                    }
+                    if (_digits[i] < 0) {
+                        overflow = true;
+                        _digits[i] %= _system;
+                    } else {
+                        overflow = false;
+                    }
+                }
+            }
+            clean_zeroes();
         }
         return *this;
+    }
+
+    BigInteger operator + (const BigInteger& x) const {
+        BigInteger res = *this;
+        return res += x;
+    }
+
+    BigInteger operator - (const BigInteger& x) const {
+        BigInteger res = *this + (-x);
+        return res;
+    }
+
+    BigInteger& operator -= (const BigInteger& x) {
+        return *this += (-x);
+    }
+
+    BigInteger& operator ++ () {
+        return *this += 1;
+    }
+
+    BigInteger& operator -- () {
+        return *this -= 1;
     }
 
 private:
     bool _sign;
     size_t _system = 1024;
     std::vector<int> _digits;
+
+    void clean_zeroes() {
+        for (int i = size() - 1; !_digits[i]; --i) {
+            _digits.pop_back();
+            if (size() == 1) {
+                return;
+            }
+        }
+    }
 };
