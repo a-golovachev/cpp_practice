@@ -1,8 +1,8 @@
 #include "BigInteger.h"
 
 int main() {
-    BigInteger a(222222);
-    BigInteger b(-222222);
+    BigInteger a(1023);
+    BigInteger b(999999);
     std::cout << (a - b).to_int();
 }
 

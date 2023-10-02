@@ -40,7 +40,10 @@ public:
     }
 
     BigInteger& operator = (const BigInteger& x) {
-
+        _sign = x._sign;
+        _system = x._system;
+        _digits = x._digits;
+        return *this;
     }
 
     BigInteger operator - () const {
@@ -121,6 +124,9 @@ public:
                     overflow = false;
                 }
             }
+            if (overflow) {
+                _digits.push_back(1);
+            }
         } else {
             if (x.abs() > abs()) {
                 for (int i = 0; i < x.size(); ++i) {
@@ -187,11 +193,8 @@ private:
     std::vector<int> _digits;
 
     void clean_zeroes() {
-        for (int i = size() - 1; !_digits[i]; --i) {
+        for (int i = size() - 1; !(_digits[i] || size() == 1); --i) {
             _digits.pop_back();
-            if (size() == 1) {
-                return;
-            }
         }
     }
 };
